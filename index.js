@@ -1,6 +1,6 @@
 const Bun = require('bun');
 
-let clientId = 0; // Initialize a counter for client IDs
+let clientId = 0;
 
 function getRandomColor() {
   const letters = '0123456789ABCDEF';
@@ -13,22 +13,20 @@ function getRandomColor() {
 
 const server = Bun.serve({
     fetch(req, server) {
-        // upgrade the request to a WebSocket
         if (server.upgrade(req)) {
-            return; // do not return a Response
+            return;
         }
         return new Response("Upgrade failed :(", {status: 500});
     },
     websocket: {
         open(ws) {
-            ws.id = clientId++; // Assign a unique ID to each WebSocket connection
-            ws.color = getRandomColor(); // Assign a random color to each WebSocket connection
+            ws.id = clientId++;
+            ws.color = getRandomColor();
             console.log(`Socket opened with ID: ${ws.id}`);
         },
         message(ws, message) {
             const data = JSON.parse(message);
 
-            // If the client is requesting its ID, send it
             if (data.request === 'clientId') {
                 ws.send(JSON.stringify({request: 'clientId', id: ws.id}));
                 return;
