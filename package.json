@@ -1,0 +1,17 @@
+{
+  "name": "pizarra_virtual",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "bun index.js",
+    "client": "bun index.html"
+  },
+  "private": true,
+  "dependencies": {
+    "bun": "^1.1.4"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}
