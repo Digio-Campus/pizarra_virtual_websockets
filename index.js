@@ -2,6 +2,9 @@ const Bun = require('bun');
 
 let clientId = 0;
 let activeSquares = {};
+let activeLines = [];
+let lastX = 0;
+let lastY = 0;
 
 
 function getRandomColor() {
@@ -42,13 +45,19 @@ const server = Bun.serve({
             }
             if (data.type === 'draw') {
                 // Always publish the draw coordinates and the message type to all clients
-                server.publish("pizarra", JSON.stringify({
-                    id: ws.id,
-                    color: ws.color,
-                    type: data.type,
-                    x: data.x,
-                    y: data.y
-                }));
+              //  [lastX, lastY] = [data.x, data.y];
+
+                activeLines.push({x1: lastX, y1: lastY, x2: data.x, y2: data.y, color: data.color});
+                server.publish("pizarra", JSON.stringify({activeLines}));
+                /* server.publish("pizarra", JSON.stringify({
+                     id: ws.id,
+                     color: ws.color,
+                     type: data.type,
+                     x: data.x,
+                     y: data.y
+                 }));
+
+                 */
             }
 
             // Always publish the mouse coordinates and the message type to all clients

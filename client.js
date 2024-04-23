@@ -2,10 +2,14 @@ const ws = new WebSocket('ws://localhost:3000');
 
 const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d');
+const drawingCanvas = document.getElementById('drawingCanvas');
+const drawingContext = drawingCanvas.getContext('2d');
 
 
 canvas.width = canvas.offsetWidth;
 canvas.height = canvas.offsetHeight;
+drawingCanvas.width = drawingCanvas.offsetWidth;
+drawingCanvas.height = drawingCanvas.offsetHeight;
 
 
 let isDrawing = false;
@@ -59,11 +63,11 @@ ws.onmessage = function (event) {
         drawSquares().then(r => drawLines());
 
     } else if (data.type === 'draw') {
-        drawLine(context, lastX, lastY, data.x, data.y, data.color);
+        drawLine(drawingContext, lastX, lastY, data.x, data.y, data.color);
         [lastX, lastY] = [data.x, data.y];
 
-        lines.push({x1: lastX, y1: lastY, x2: data.x, y2: data.y, color: data.color});
-        drawLines()
+      //  lines.push({x1: lastX, y1: lastY, x2: data.x, y2: data.y, color: data.color});
+
     }
 
 };
@@ -80,6 +84,7 @@ function drawLine(context, x1, y1, x2, y2, color) {
 
 async function drawSquares() {
     await context.clearRect(0, 0, canvas.width, canvas.height);
+    drawLines()
 
     for (let id in activeSquares) {
         let square = activeSquares[id];
@@ -97,10 +102,10 @@ async function drawSquares() {
         context.fillStyle = "black";
         context.fillText("Usuario " + id, centerX + 50, centerY + 50);
     }
-    drawLines()
 }
 
 function drawLines() {
+    console.log("Drawing lines");
     for (let line of lines) {
         drawLine(context, line.x1, line.y1, line.x2, line.y2, line.color);
     }
